@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}{% endblock %}</h1>
+  {% if g.user %}
+    <a class="action" href="{{ url_for('question.create') }}">New</a>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+  {% for question in questions %}
+    <article class="post">
+      <header>
+        <div>
+          <h1>{{ question['text'] }}</h1>
+          <div class="about">by {{ question['username'] }} on {{ question['created'].strftime('%Y-%m-%d') }}</div>
+        </div>
+        {% if g.user['id'] == question['author_id'] %}
+          <a class="action" href="{{ url_for('question.update', id=question['id']) }}">Edit</a>
+        {% endif %}
+      </header>
+      <p class="body">{{ question['link'] }}</p>
+    </article>
+    {% if not loop.last %}
+      <hr>
+    {% endif %}
+  {% endfor %}
+{% endblock %}

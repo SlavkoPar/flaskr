@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Categories{% endblock %}</h1>
+  {% if g.user %}
+    <a class="action" href="{{ url_for('category.create') }}">New</a>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+  {% for category in categories %}
+    <article class="post">
+      <header>
+        <div>
+          <h1>{{ category['name'] }}</h1>
+          <div class="about">by {{ category['username'] }} on {{ category['created'].strftime('%Y-%m-%d') }}</div>
+        </div>
+        {% if g.user['id'] == category['author_id'] %}
+          <a class="action" href="{{ url_for('category.update', id=category['id']) }}">Edit</a>
+          <a class="action" href="{{ url_for('category.add_question', id=category['id']) }}">Add question</a>
+        {% endif %}
+      </header>
+      <p class="body">{{ category['description'] }}</p>
+    </article>
+    {% if not loop.last %}
+      <hr>
+    {% endif %}
+  {% endfor %}
+{% endblock %}

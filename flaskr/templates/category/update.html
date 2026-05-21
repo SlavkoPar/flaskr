@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<h1>{% block title %}Edit "{{ category['name'] }}"{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+<form method="post">
+  <label for="name">Name</label>
+  <input name="name" id="name" value="{{ request.form['name'] or category['name'] }}" required>
+  <label for="description">Description</label>
+  <textarea name="description" id="description">{{ request.form['description'] or category['description'] }}</textarea>
+  <input type="submit" value="Save">
+</form>
+
+  <div class="related">
+    <h5>Related Questions</h5>
+    {% for question in questions %}
+    <div class="question">
+      <a href="{{ url_for('question.update', id=question['id']) }}">{{ question['text'] }}</a>
+    </div>
+    {% else %}
+    <p>No questions.</p>
+    {% endfor %}
+
+<hr>
+
+<form action="{{ url_for('category.delete', id=category['id']) }}" method="post">
+  <input class="danger" type="submit" value="Delete" onclick="return confirm('Are you sure?');">
+</form>
+
+{% endblock %}
