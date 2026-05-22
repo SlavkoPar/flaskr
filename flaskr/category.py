@@ -3,12 +3,10 @@ from urllib import request
 from flask import (Blueprint, flash, g, redirect, render_template, request, url_for)
 from werkzeug.exceptions import abort
 
-
 from .auth import login_required
 from .db import get_db
 
 bp = Blueprint("category", __name__)
-
 
 @bp.route("/")
 def index():
@@ -85,13 +83,38 @@ def get_category_questions(id, check_author=True):
 
     return questions
 
+
+def get_category_questions_count(id, check_author=True):
+    """Get the count of questions for a category.
+
+    Checks that the id exists and optionally that the current user is
+    the author.
+    """
+
+    questions_count = (
+        get_db()
+        .execute("SELECT COUNT(*) FROM question WHERE category_id = ?", (id,))
+        .fetchone()
+    )
+
+    if questions_count is None:
+        abort(404, f"Questions for category{id} doesn't exist.")
+
+    # if check_author and category["author_id"] != g.user["id"]:
+    #     abort(403)
+
+    return questions_count
+
+
 @bp.route("/<int:id>/add_question", methods=("GET", "POST"))
 def add_question(id):
     return redirect(url_for("question.create", category_id=id))
 
+
 @bp.route("/create", methods=("GET", "POST"))
 @login_required
 def create():
+
     """Create a new category for the current user."""
     if request.method == "POST":
         name = request.form["name"]

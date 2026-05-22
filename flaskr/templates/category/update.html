@@ -14,10 +14,15 @@
 </form>
 
   <div class="related">
-    <h5>Related Questions</h5>
+    <h4>Related Questions
+    &nbsp; <a class="action" href="{{ url_for('category.add_question', id=category['id']) }}">Add question</a>
+    </h4>
+    <br/>
     {% for question in questions %}
     <div class="question">
       <a href="{{ url_for('question.update', id=question['id']) }}">{{ question['text'] }}</a>
+      &nbsp; &nbsp; &nbsp;
+      <a href="{{ url_for('question.delete', id=question['id']) }}" style="text-decoration: none;" onclick="return confirm('Are you sure?');">delete</a>
     </div>
     {% else %}
     <p>No questions.</p>
@@ -26,7 +31,7 @@
 <hr>
 
 <form action="{{ url_for('category.delete', id=category['id']) }}" method="post">
-  <input class="danger" type="submit" value="Delete" onclick="return confirm('Are you sure?');">
+  <input class="danger" type="submit" value="Delete Category" onclick="return confirm('Are you sure?');">
 </form>
 
 {% endblock %}

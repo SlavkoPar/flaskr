@@ -39,7 +39,7 @@ def get_question(id, check_author=True):
     question = (
         get_db()
         .execute(
-            "SELECT c.id, text, link, created, author_id, username"
+            "SELECT category_id, c.id, text, link, created, author_id, username"
             " FROM question c JOIN user u ON c.author_id = u.id"
             " WHERE c.id = ?",
             (id,),
@@ -61,7 +61,6 @@ def get_question(id, check_author=True):
 def create(category_id):
     """Create a new question for the current user."""
     if request.method == "POST":
-        category_id = category_id
         text = request.form["text"]
         link = request.form["link"]
         error = None
@@ -78,7 +77,8 @@ def create(category_id):
                 (text, link, g.user["id"], category_id),
             )
             db.commit()
-            return redirect(url_for("question.index"))
+            # return redirect(url_for("question.index", category_id=category_id))
+            return redirect(url_for("category.update", id=category_id))
 
     return render_template("question/create.html", category_id=category_id)
 
@@ -105,12 +105,13 @@ def update(id):
                 "UPDATE question SET text = ?, link = ? WHERE id = ?", (text, link, id)
             )
             db.commit()
-            return redirect(url_for("question.index"))
-
+            # return redirect(url_for("question.index"))
+            return redirect(url_for("category.update", id=question["category_id"]))
     return render_template("question/update.html", question=question)
 
 
-@bp.route("/<int:id>/delete", methods=("POST",))
+
+@bp.route("/<int:id>/delete", methods=("POST","GET"))
 @login_required
 def delete(id):
     """Delete a question.
@@ -118,8 +119,9 @@ def delete(id):
     Ensures that the question exists and that the logged in user is the
     author of the question.
     """
-    get_question(id)
+    question = get_question(id)
     db = get_db()
     db.execute("DELETE FROM question WHERE id = ?", (id,))
     db.commit()
-    return redirect(url_for("question.index"))
+    # return redirect(url_for("question.index"))
+    return redirect(url_for("category.update", id=question["category_id"]))
