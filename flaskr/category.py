@@ -13,9 +13,10 @@ def index():
     """Show all the categories, most recent first."""
     db = get_db()
     categories = db.execute(
-        "SELECT id, name, description, created, author_id"
-        " FROM category"
-        " ORDER BY created DESC"
+        "SELECT c.id, c.name, c.description, c.created, c.author_id, COUNT(q.id) AS num_of_questions"
+        " FROM category c LEFT OUTER JOIN question q ON c.id = q.category_id"
+        " GROUP BY c.id"
+        " ORDER BY c.created DESC"
     ).fetchall()
     return render_template("category/index.html", categories=categories)
 
@@ -35,9 +36,12 @@ def get_category(id, check_author=True):
     category = (
         get_db()
         .execute(
-            "SELECT c.id, name, description, created, author_id, username"
-            " FROM category c JOIN user u ON c.author_id = u.id"
-            " WHERE c.id = ?",
+            "SELECT c.id, name, description, c.created, c.author_id, username, COUNT(q.id) AS num_of_questions"
+            " FROM category c "
+            "JOIN user u ON c.author_id = u.id "
+            "LEFT OUTER JOIN question q ON c.id = q.category_id"
+            " WHERE c.id = ?"
+            " GROUP BY c.id" ,
             (id,),
         )
         .fetchone()

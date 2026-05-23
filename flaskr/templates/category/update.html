@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block header %}
-<h1>{% block title %}Edit "{{ category['name'] }}"{% endblock %}</h1>
+<h1>{% block title %}{{ category['name'] }}{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
@@ -14,7 +14,7 @@
 </form>
 
   <div class="related">
-    <h4>Related Questions
+    <h4>Related Questions  ({{ category['num_of_questions'] }})
     &nbsp; <a class="action" href="{{ url_for('category.add_question', id=category['id']) }}">Add question</a>
     </h4>
     <br/>
@@ -31,7 +31,10 @@
 <hr>
 
 <form action="{{ url_for('category.delete', id=category['id']) }}" method="post">
-  <input class="danger" type="submit" value="Delete Category" onclick="return confirm('Are you sure?');">
+  <input class="danger" type="submit" value="Delete Category"
+
+   {% if category['num_of_questions'] == 0 %}disabled{% endif %}
+    onclick="return confirm('Are you sure?');">
 </form>
 
 {% endblock %}
