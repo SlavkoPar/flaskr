@@ -120,7 +120,7 @@ nav ul li a, nav ul li span, header .action {
 }
 
 .content textarea {
-  min-height: 12em;
+  min-height: 3em;
   resize: vertical;
 }
 

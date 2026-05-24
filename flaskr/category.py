@@ -9,7 +9,7 @@ from .db import get_db
 bp = Blueprint("category", __name__)
 
 @bp.route("/")
-def index():
+def index(expanded_id = None, questions = None):
     """Show all the categories, most recent first."""
     db = get_db()
     categories = db.execute(
@@ -18,7 +18,7 @@ def index():
         " GROUP BY c.id"
         " ORDER BY c.created DESC"
     ).fetchall()
-    return render_template("category/index.html", categories=categories)
+    return render_template("category/index.html", categories=categories, expanded_id=expanded_id, questions=questions)
 
 
 def get_category(id, check_author=True):
@@ -114,6 +114,11 @@ def get_category_questions_count(id, check_author=True):
 def add_question(id):
     return redirect(url_for("question.create", category_id=id))
 
+@bp.route("/<int:id>/expand", methods=("GET", "POST"))
+def expand(id):
+    # return render_template("category/index.html", questions=get_category_questions(id), expanded_id = id)
+    questions = get_category_questions(id)
+    return index(expanded_id = id, questions = questions)
 
 @bp.route("/create", methods=("GET", "POST"))
 @login_required

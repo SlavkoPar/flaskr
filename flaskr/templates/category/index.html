@@ -1,34 +1,63 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}Categories{% endblock %}</h1>
-  {% if g.user %}
-    <a class="action" href="{{ url_for('category.create') }}">New</a>
-  {% endif %}
+<h1>{% block title %}Categories{% endblock %}</h1>
+{% if g.user %}
+<a class="action" href="{{ url_for('category.create') }}">New</a>
+{% endif %}
 {% endblock %}
 
 {% block content %}
-  {% for category in categories %}
-    <article class="post">
-      <header>
-        <div>
-          <h2>
-            <a class="action" href="{{ url_for('category.update', id=category['id']) }}">
-              {{ category['name'] }}
-              ({{ category['num_of_questions'] }})
-            </a>
-          </h2>
-          <div class="about">by {{ category['username'] }} on {{ category['created'].strftime('%Y-%m-%d') }}</div>
-        </div>
-        {% if g.user['id'] == category['author_id'] %}
-          <!-- <a class="action" href="{{ url_for('category.update', id=category['id']) }}">Edit</a> -->
-          <a class="action" href="{{ url_for('category.add_question', id=category['id']) }}">Add question</a>
-        {% endif %}
-      </header>
-      <!-- <p class="body">{{ category['description'] }}</p> -->
-    </article>
-    {% if not loop.last %}
+{% for category in categories %}
+<article class="post">
+  <header>
+    <div>
+      <h2>
+        <a class="action" href="{{ url_for('category.update', id=category['id']) }}">
+          {{ category['name'] }}
+          ({{ category['num_of_questions'] }})
+        </a>
+      </h2>
+      <div class="about">by {{ category['username'] }} on {{ category['created'].strftime('%Y-%m-%d') }}</div>
+
+      {% if category['id'] == expanded_id%}
+      <div style="border-radius: 3; margin-left: 10px; padding: 2px; background-color: #f0f0f0;">
+      {% for question in questions %}
+      <article class="post">
+        <header>
+          <div>
+
+            <h2>
+              {% if g.user['id'] == question['author_id'] %}
+                <a class="action" href="{{ url_for('question.update', id=question['id']) }}">{{ question['text'] }}</a>
+              {% else %}
+                {{ question['text'] }}
+              {% endif %}
+            </h2>
+            <div class="about">by {{ question['username'] }} on {{ question['created'].strftime('%Y-%m-%d') }}</div>
+          </div>
+
+        </header>
+        <p class="body" style="margin:0">{{ question['link'] }}</p>
+      </article>
+      {% if not loop.last %}
       <hr>
+      {% endif %}
+      {% endfor %}
+      </div>
+      {% else %}
+      <a class="action" href="{{ url_for('category.expand', id=category['id']) }}">Render questions</a>
+      {% endif %}
+    </div>
+    {% if g.user['id'] == category['author_id'] %}
+    <!-- <a class="action" href="{{ url_for('category.update', id=category['id']) }}">Edit</a> -->
+    <a class="action" href="{{ url_for('category.add_question', id=category['id']) }}">Add question</a>
     {% endif %}
-  {% endfor %}
+  </header>
+  <!-- <p class="body">{{ category['description'] }}</p> -->
+</article>
+{% if not loop.last %}
+<hr>
+{% endif %}
+{% endfor %}
 {% endblock %}

@@ -1,13 +1,13 @@
-{% extends 'base.html' %}
+<!-- {% extends 'base.html' %} -->
 
-{% block header %}
+<!-- {% block header %}
   <h1>{% block title %}{% endblock %}</h1>
   {% if g.user %}
     <a class="action" href="{{ url_for('question.create') }}">New</a>
   {% endif %}
-{% endblock %}
+{% endblock %} -->
 
-{% block content %}
+<!-- {% block questions %} -->
   {% for question in questions %}
     <article class="post">
       <header>
@@ -25,4 +25,4 @@
       <hr>
     {% endif %}
   {% endfor %}
-{% endblock %}
+<!-- {% endblock %} -->

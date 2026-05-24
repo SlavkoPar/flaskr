@@ -33,7 +33,7 @@
 <form action="{{ url_for('category.delete', id=category['id']) }}" method="post">
   <input class="danger" type="submit" value="Delete Category"
 
-   {% if category['num_of_questions'] == 0 %}disabled{% endif %}
+   {% if category['num_of_questions'] > 0 %}disabled{% endif %}
     onclick="return confirm('Are you sure?');">
 </form>
 
